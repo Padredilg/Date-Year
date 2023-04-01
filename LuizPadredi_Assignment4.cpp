@@ -9,6 +9,72 @@ Repository: https://github.com/Padredilg/Date-Year
 
 using namespace std;
 
+
+/*
+
+Define a class called DateYear,
+that represents any year
+like 2023 in addition to the day and month (03/34/2023).
+
+Your class will have
+one member variable of type int to represent the year.
+This class is a child of the DayOfYear class where the code is given in lecture14
+(Lecture14_Code.cpp).
+
+Your DateYear class should have the following member functions:
+- a constructor
+and a default constructor that sets the year to this year,
+month to 1 and day to 1.
+
+- an input function that reads the date (day, month, and year). Make sure to
+check for inaccurate dates.
+
+- getter and setters for the year.
+
+- an output function that outputs the date in form of xx/xx/xxxx. It can display
+to the screen or the file.
+
+- A friend function DateCompare that compares two years and returns true
+if they are the same.
+
+- A member function BDCountdown, which calculates and returns how many
+days till your birthday. This function take the birthday as the input parameter
+and returns the number of days left to the birthday which should be less than
+365. Take note of the month in Gregorian calendar. The Gregorian calendar
+consists of the following 12 months:
+
+January - 31 days
+February - 28 days in a common year and 29 days in leap years
+March - 31 days
+April - 30 days
+May - 31 days
+June - 30 days
+July - 31 days
+August - 31 days
+September - 30 days
+October - 31 days
+November - 30 days
+December - 31 days
+
+You can put the days in an array to access them for computing the number of days.
+
+Embed your class definition in a test program.
+The test program should test all the attributes
+(every single function and all the data should be tested).
+
+All your inputs and outputs can be done using the keyboard and the screen.
+Even though your input/output functions can stream through files.
+So, how many days is left to your birthday?
+
+Note1: friend functions are not inheritable (the friend functions in lecture 14 code
+cannot be inherited by DateYear class)
+
+Note2: you can reuse function names and tailor them to the needs of the derived
+class.
+
+*/
+const int thisYear = 2023;
+
 //Purpose of this class: store a date (whether it's a birthday or an event)
 class DayOfYear
 {
@@ -32,9 +98,44 @@ class DayOfYear
         int day;
 };
 
+class DateYear : public DayOfYear
+{
+    private:
+        int year;
+    public:
+        DateYear(int yearPar, int monthPar, int dayPar);
+        DateYear();
+        void inputFullDate();
+        void outputFullDate();
+        int getYear();
+        void setYear(int yearPar);
+        /*- a constructor
+and a default constructor that sets the year to this year,
+month to 1 and day to 1.*/
+};
+
 //testing out classes
 int main()
 {
+    DateYear birthDate;
+    DateYear compareDate;
+
+    cout << endl
+         << "====================================================="
+         << endl << endl
+         << "Please input your birthday information."
+         << endl;
+    birthDate.inputFullDate();
+
+    cout << endl << endl
+         << "Please input the information of the date to be compared."
+         << endl;
+    compareDate.inputFullDate();
+
+
+
+
+
     DayOfYear today, bach_birthday(3,21);
     //today.check_date();
     cout << "Enter today's date.\n";
@@ -58,6 +159,35 @@ int main()
 
     return 0;
 }
+
+DateYear::DateYear(int yearPar, int monthPar, int dayPar){
+    year = yearPar;
+    set_date(monthPar, dayPar);
+}
+
+DateYear::DateYear():year(thisYear){
+    set_date(1, 1);
+}
+
+void DateYear::inputFullDate(){
+    input();
+    cout << "Enter the year: ";
+    cin >> year;
+
+    //maybe call function to make sure the day exists in the month givenand include logic to check year as well
+
+    if ((year < 0))
+    {   //input();
+        cout << "Illegal date. Aborting program.\n";
+        exit(1);
+    }
+}
+
+int DateYear::getYear(){ return year; }
+void DateYear::setYear(int yearPar){ year = yearPar; }
+
+
+
 
 DayOfYear::DayOfYear()
 {
