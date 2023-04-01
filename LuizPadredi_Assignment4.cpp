@@ -109,53 +109,57 @@ class DateYear : public DayOfYear
         void outputFullDate();
         int getYear();
         void setYear(int yearPar);
-        /*- a constructor
-and a default constructor that sets the year to this year,
-month to 1 and day to 1.*/
+        friend bool DateCompare(DateYear date1, DateYear date2);
 };
 
 //testing out classes
 int main()
 {
     DateYear birthDate;
-    DateYear compareDate;
+    DateYear today;
 
     cout << endl
          << "====================================================="
          << endl << endl
-         << "Please input your birthday information."
+         << "Please input your birth date."
          << endl;
     birthDate.inputFullDate();
 
     cout << endl << endl
-         << "Please input the information of the date to be compared."
+         << "Please input today's date."
          << endl;
-    compareDate.inputFullDate();
+    today.inputFullDate();
 
+    birthDate.outputFullDate();
+    today.outputFullDate();
 
-
-
-
-    DayOfYear today, bach_birthday(3,21);
-    //today.check_date();
-    cout << "Enter today's date.\n";
-    today.input( );
-    cout << "Today's date is ";
-    today.output( );
-    cout << "J. S. Bach's birthday is ";
-    bach_birthday.output( );
-    if (equal(today,bach_birthday) )
-     cout << "Happy Birthday Johann Sebastian!\n";
+    if(DateCompare(birthDate, today))
+        cout << "\nbirthday\n";
     else
-    cout << "Happy Unbirthday Johann Sebastian!\n";
+        cout << "\nunbirthday\n";
 
 
-    today = bach_birthday;           //assignment operator would set values of bach_birthday to today's values
-    cout << "\nNow again! I have set today's date to that of Bach's birthday\n";
-    if (equal(today,bach_birthday) )
-     cout << "Happy Birthday Johann Sebastian!\n";
-    else
-    cout << "Happy Unbirthday Johann Sebastian!\n";
+
+//    DayOfYear today, bach_birthday(3,21);
+//    //today.check_date();
+//    cout << "Enter today's date.\n";
+//    today.input( );
+//    cout << "Today's date is ";
+//    today.output( );
+//    cout << "J. S. Bach's birthday is ";
+//    bach_birthday.output( );
+//    if (equal(today,bach_birthday) )
+//     cout << "Happy Birthday Johann Sebastian!\n";
+//    else
+//    cout << "Happy Unbirthday Johann Sebastian!\n";
+//
+//
+//    today = bach_birthday;           //assignment operator would set values of bach_birthday to today's values
+//    cout << "\nNow again! I have set today's date to that of Bach's birthday\n";
+//    if (equal(today,bach_birthday) )
+//     cout << "Happy Birthday Johann Sebastian!\n";
+//    else
+//    cout << "Happy Unbirthday Johann Sebastian!\n";
 
     return 0;
 }
@@ -183,8 +187,18 @@ void DateYear::inputFullDate(){
     }
 }
 
+void DateYear::outputFullDate(){
+   cout << endl
+        << get_month() << "/" << get_day() << "/" << getYear();
+}
+
 int DateYear::getYear(){ return year; }
 void DateYear::setYear(int yearPar){ year = yearPar; }
+
+bool DateCompare(DateYear date1, DateYear date2){
+    return ( (date1.year == date2.year) && equal(date1, date2) );
+}
+
 
 
 
