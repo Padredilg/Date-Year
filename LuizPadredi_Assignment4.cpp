@@ -40,8 +40,9 @@ if they are the same.
 - A member function BDCountdown, which calculates and returns how many
 days till your birthday. This function take the birthday as the input parameter
 and returns the number of days left to the birthday which should be less than
-365. Take note of the month in Gregorian calendar. The Gregorian calendar
-consists of the following 12 months:
+365. Take note of the month in Gregorian calendar.
+
+The Gregorian calendar consists of the following 12 months:
 
 January - 31 days
 February - 28 days in a common year and 29 days in leap years
@@ -73,6 +74,8 @@ Note2: you can reuse function names and tailor them to the needs of the derived
 class.
 
 */
+bool isLeapYear(int year);
+
 const int thisYear = 2023;
 
 //Purpose of this class: store a date (whether it's a birthday or an event)
@@ -110,18 +113,22 @@ class DateYear : public DayOfYear
         int getYear();
         void setYear(int yearPar);
         friend bool DateCompare(DateYear date1, DateYear date2);
+        int BDCountdown(DateYear birthday);
+
 };
 
 //testing out classes
 int main()
 {
+    //TODO FIX
+    //better way to use all constructors is to get a function to figure out when is today and then pass the args as params into the constructor for today
     DateYear birthDate;
     DateYear today;
 
     cout << endl
          << "====================================================="
          << endl << endl
-         << "Please input your birth date."
+         << "Please input your date of birth."
          << endl;
     birthDate.inputFullDate();
 
@@ -134,32 +141,9 @@ int main()
     today.outputFullDate();
 
     if(DateCompare(birthDate, today))
-        cout << "\nbirthday\n";
+        cout << "\nHappy Birthday!!!\n";
     else
-        cout << "\nunbirthday\n";
-
-
-
-//    DayOfYear today, bach_birthday(3,21);
-//    //today.check_date();
-//    cout << "Enter today's date.\n";
-//    today.input( );
-//    cout << "Today's date is ";
-//    today.output( );
-//    cout << "J. S. Bach's birthday is ";
-//    bach_birthday.output( );
-//    if (equal(today,bach_birthday) )
-//     cout << "Happy Birthday Johann Sebastian!\n";
-//    else
-//    cout << "Happy Unbirthday Johann Sebastian!\n";
-//
-//
-//    today = bach_birthday;           //assignment operator would set values of bach_birthday to today's values
-//    cout << "\nNow again! I have set today's date to that of Bach's birthday\n";
-//    if (equal(today,bach_birthday) )
-//     cout << "Happy Birthday Johann Sebastian!\n";
-//    else
-//    cout << "Happy Unbirthday Johann Sebastian!\n";
+        cout << "\nToday is not your birthday, but your next birthday is coming up in " << today.BDCountdown(birthDate) << " days!" << endl;
 
     return 0;
 }
@@ -178,7 +162,8 @@ void DateYear::inputFullDate(){
     cout << "Enter the year: ";
     cin >> year;
 
-    //maybe call function to make sure the day exists in the month givenand include logic to check year as well
+    //TODO FIX
+    //maybe call function to make sure the day exists in the month given and include logic to check year as well
 
     if ((year < 0))
     {   //input();
@@ -195,11 +180,69 @@ void DateYear::outputFullDate(){
 int DateYear::getYear(){ return year; }
 void DateYear::setYear(int yearPar){ year = yearPar; }
 
+//TODO FIX
+//Dont use equal() as per instruction
 bool DateCompare(DateYear date1, DateYear date2){
-    return ( (date1.year == date2.year) && equal(date1, date2) );
+    return ( date1.year == date2.year ) && equal(date1, date2);
+}
+
+//TODO FIX
+int DateYear::BDCountdown(DateYear birthday){
+    int day = get_day();
+    int month = get_month();
+
+    int thisYearCalendar[12] = {31,28,31,30,31,30,31,31,30,31,30,31};
+
+    if(isLeapYear(year)){
+        thisYearCalendar[1] += 1;
+    }
+
+    int daysLeftToBD = 0;
+
+    //if today month is before birth month, need months in between
+        //don't include month of birthday but add birth days
+        //include today month but subtract today days
+    if(month < birthday.get_month()){
+
+    }
+
+    //if same month
+        //today day is before birthday
+            //difference
+        //today day is after
+            // 365 - difference
+    if(month == birthday.get_month()){
+
+    }
+
+    //if today month is after month birthday need months after and months before
+        //don't include month of birthday but add birth days
+        //include today month but subtract today days
+    if(month > birthday.get_month()){
+
+    }
+
+
+    return daysLeftToBD;
 }
 
 
+bool isLeapYear(int year) {
+    bool yearIsDivisibleBy4 = year%4 == 0;
+    bool yearIsDivisibleBy100 = year%100 == 0;
+    bool yearIsDivisibleBy400 = year%400 == 0;
+
+    if( year >= 400 && yearIsDivisibleBy400 )
+        return true;
+
+    if( year >= 100 && ( yearIsDivisibleBy4 && !yearIsDivisibleBy100 ) )
+        return true;
+
+    if( year < 100 && yearIsDivisibleBy4 )
+        return true;
+
+    return false;
+}
 
 
 
