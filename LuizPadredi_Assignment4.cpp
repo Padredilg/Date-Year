@@ -186,40 +186,70 @@ bool DateCompare(DateYear date1, DateYear date2){
     return ( date1.year == date2.year ) && equal(date1, date2);
 }
 
-//TODO FIX
 int DateYear::BDCountdown(DateYear birthday){
-    int day = get_day();
-    int month = get_month();
+    int todayMonth = get_month();
+    int todayDay = get_day();
+    int birthdayMonth = birthday.get_month();
+    int birthdayDay = birthday.get_day();
+    int daysLeftToBD = 0;
 
     int thisYearCalendar[12] = {31,28,31,30,31,30,31,31,30,31,30,31};
-
     if(isLeapYear(year)){
         thisYearCalendar[1] += 1;
     }
 
-    int daysLeftToBD = 0;
+    //if birthday month is in the future,
+    if(todayMonth < birthdayMonth){
+        //add current month and months in between
+        //don't add birthday month
+        for(int i = todayMonth; i < birthdayMonth; i++){
+            daysLeftToBD += thisYearCalendar[i-1];
+        }
 
-    //if today month is before birth month, need months in between
-        //don't include month of birthday but add birth days
-        //include today month but subtract today days
-    if(month < birthday.get_month()){
+        //subtract current day
+        daysLeftToBD -= todayDay;
 
+        //add birthday day
+        daysLeftToBD += birthdayDay;
     }
 
     //if same month
-        //today day is before birthday
-            //difference
-        //today day is after
-            // 365 - difference
-    if(month == birthday.get_month()){
+    else if(todayMonth == birthdayMonth){
+        //if today is before birthday difference is left
+        if(todayDay < birthdayDay){
+            daysLeftToBD = birthdayDay - todayDay;
+        }
 
+        //if today is past birthday, 365 minus the difference
+        else if(todayDay > birthdayDay){
+            daysLeftToBD = 365 - ( todayDay - birthdayDay );
+
+
+            //TODO FIX -- what if next year is leap year?
+            //TODO FIX -- but what if birthday is before leap day?
+        }
     }
 
-    //if today month is after month birthday need months after and months before
-        //don't include month of birthday but add birth days
-        //include today month but subtract today days
-    if(month > birthday.get_month()){
+    //if birthday month is past
+    else if(todayMonth > birthdayMonth){
+        //include this month and remaining months in the year
+        for(int i = todayMonth; i <= 12; i++){
+            daysLeftToBD += thisYearCalendar[i-1];
+        }
 
+        //include months of next year that are before the birthday month
+        for(int i = 1; i < birthdayMonth; i++){
+            daysLeftToBD += thisYearCalendar[i-1];
+        }
+
+        //subtract current day
+        daysLeftToBD -= todayDay;
+
+        //add birthday day
+        daysLeftToBD += birthdayDay;
+
+        //TODO FIX -- what if next year is leap year?
+        //TODO FIX -- but what if birthday is before leap day?
     }
 
 
