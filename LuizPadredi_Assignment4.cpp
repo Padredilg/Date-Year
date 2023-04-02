@@ -1,6 +1,6 @@
 /*
 Author: Luiz Padredi
-Date: 03/28/2023
+Date: 04/1/2023
 Assignment 4: Date Year
 Repository: https://github.com/Padredilg/Date-Year
 */
@@ -9,72 +9,8 @@ Repository: https://github.com/Padredilg/Date-Year
 
 using namespace std;
 
-
-/*
-
-Define a class called DateYear,
-that represents any year
-like 2023 in addition to the day and month (03/34/2023).
-
-Your class will have
-one member variable of type int to represent the year.
-This class is a child of the DayOfYear class where the code is given in lecture14
-(Lecture14_Code.cpp).
-
-Your DateYear class should have the following member functions:
-- a constructor
-and a default constructor that sets the year to this year,
-month to 1 and day to 1.
-
-- an input function that reads the date (day, month, and year). Make sure to
-check for inaccurate dates.
-
-- getter and setters for the year.
-
-- an output function that outputs the date in form of xx/xx/xxxx. It can display
-to the screen or the file.
-
-- A friend function DateCompare that compares two years and returns true
-if they are the same.
-
-- A member function BDCountdown, which calculates and returns how many
-days till your birthday. This function take the birthday as the input parameter
-and returns the number of days left to the birthday which should be less than
-365. Take note of the month in Gregorian calendar.
-
-The Gregorian calendar consists of the following 12 months:
-
-January - 31 days
-February - 28 days in a common year and 29 days in leap years
-March - 31 days
-April - 30 days
-May - 31 days
-June - 30 days
-July - 31 days
-August - 31 days
-September - 30 days
-October - 31 days
-November - 30 days
-December - 31 days
-
-You can put the days in an array to access them for computing the number of days.
-
-Embed your class definition in a test program.
-The test program should test all the attributes
-(every single function and all the data should be tested).
-
-All your inputs and outputs can be done using the keyboard and the screen.
-Even though your input/output functions can stream through files.
-So, how many days is left to your birthday?
-
-Note1: friend functions are not inheritable (the friend functions in lecture 14 code
-cannot be inherited by DateYear class)
-
-Note2: you can reuse function names and tailor them to the needs of the derived
-class.
-
-*/
 bool isLeapYear(int year);
+string getOrdinal(int age);
 
 const int thisYear = 2023;
 
@@ -106,7 +42,7 @@ class DateYear : public DayOfYear
     private:
         int year;
     public:
-        DateYear(int yearPar, int monthPar, int dayPar);
+        DateYear(int monthPar, int dayPar, int yearPar);
         DateYear();
         void inputFullDate();
         void outputFullDate();
@@ -120,8 +56,6 @@ class DateYear : public DayOfYear
 //testing out classes
 int main()
 {
-    //TODO FIX
-    //better way to use all constructors is to get a function to figure out when is today and then pass the args as params into the constructor for today
     DateYear birthDate;
     DateYear today;
 
@@ -131,24 +65,38 @@ int main()
          << "Please input your date of birth."
          << endl;
     birthDate.inputFullDate();
+    birthDate.outputFullDate();
 
     cout << endl << endl
          << "Please input today's date."
          << endl;
     today.inputFullDate();
-
-    birthDate.outputFullDate();
     today.outputFullDate();
 
     if(DateCompare(birthDate, today))
         cout << "\nHappy Birthday!!!\n";
     else
-        cout << "\nToday is not your birthday, but your next birthday is coming up in " << today.BDCountdown(birthDate) << " days!" << endl;
+        cout << "\nYour next birthday is coming up in " << today.BDCountdown(birthDate) << " days." << endl;
+
+    DateYear importantDate = DateYear(7,4,1776);
+    if(DateCompare(importantDate, today))
+        cout << "\nToday is 4th of July!! Happy Independence Day!\n";
+    else
+        cout << "\nNext 4th of July is in " << today.BDCountdown(importantDate) << " days.\n";
+
+    importantDate.set_date(12,25);
+    if(DateCompare(importantDate, today))
+        cout << "\nToday is December 25th!! Merry Christmas!\n";
+    else
+        cout << "\nNext Christmas is in " << today.BDCountdown(importantDate) << " days.\n";
+
+    importantDate.setYear(birthDate.getYear());
+    cout << "\nAt the end of this year, you will experience your New Years of number " << today.getYear() - importantDate.getYear() << "!\n";
 
     return 0;
 }
 
-DateYear::DateYear(int yearPar, int monthPar, int dayPar){
+DateYear::DateYear(int monthPar, int dayPar, int yearPar){
     year = yearPar;
     set_date(monthPar, dayPar);
 }
@@ -162,26 +110,27 @@ void DateYear::inputFullDate(){
     cout << "Enter the year: ";
     cin >> year;
 
-    //TODO FIX
-    //maybe call function to make sure the day exists in the month given and include logic to check year as well
+    int thisYearCalendar[12] = {31,28,31,30,31,30,31,31,30,31,30,31};
+    if(isLeapYear(year)){
+        thisYearCalendar[1] += 1;
+    }
+    int day = get_day();
+    int month = get_month();
 
-    if ((year < 0))
-    {   //input();
+    if((year < 0) || (year > thisYear) || (month < 1) || (month > 12) || (day < 1) || (day > thisYearCalendar[month-1]))
+    {
         cout << "Illegal date. Aborting program.\n";
         exit(1);
     }
 }
 
 void DateYear::outputFullDate(){
-   cout << endl
-        << get_month() << "/" << get_day() << "/" << getYear();
+   cout << get_month() << "/" << get_day() << "/" << getYear() << endl;
 }
 
 int DateYear::getYear(){ return year; }
 void DateYear::setYear(int yearPar){ year = yearPar; }
 
-//TODO FIX
-//Dont use equal() as per instruction
 bool DateCompare(DateYear date1, DateYear date2){
     return ( date1.year == date2.year ) && equal(date1, date2);
 }
@@ -224,9 +173,12 @@ int DateYear::BDCountdown(DateYear birthday){
         else if(todayDay > birthdayDay){
             daysLeftToBD = 365 - ( todayDay - birthdayDay );
 
-
-            //TODO FIX -- what if next year is leap year?
-            //TODO FIX -- but what if birthday is before leap day?
+            //if next year is leap year
+            if(isLeapYear(year + 1)){
+                if( birthdayMonth > 2 || ( birthdayMonth == 2 && birthdayDay == 29 ) ){
+                    daysLeftToBD++;
+                }
+            }
         }
     }
 
@@ -248,14 +200,16 @@ int DateYear::BDCountdown(DateYear birthday){
         //add birthday day
         daysLeftToBD += birthdayDay;
 
-        //TODO FIX -- what if next year is leap year?
-        //TODO FIX -- but what if birthday is before leap day?
+        //if next year is leap year
+        if(isLeapYear(year + 1)){
+            if( birthdayMonth > 2 || ( birthdayMonth == 2 && birthdayDay == 29 ) ){
+                daysLeftToBD++;
+            }
+        }
     }
-
 
     return daysLeftToBD;
 }
-
 
 bool isLeapYear(int year) {
     bool yearIsDivisibleBy4 = year%4 == 0;
@@ -274,7 +228,7 @@ bool isLeapYear(int year) {
     return false;
 }
 
-
+///////////////////////////////////////////////////////////////////////////////////
 
 DayOfYear::DayOfYear()
 {
